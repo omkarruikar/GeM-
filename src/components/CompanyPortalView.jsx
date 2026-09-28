@@ -34,7 +34,11 @@ export default function CompanyPortalView({
     work_orders: "L&T_Past_Order_IOCL_Panipat.pdf",
     iso_cert: "L&T_ISO_9001_2015_Certificate.pdf",
     affidavit: "L&T_Notarized_Integrity_Affidavit.pdf",
-    local_content: "L&T_Make_in_India_Local_Content.pdf"
+    local_content: "L&T_Make_in_India_Local_Content.pdf",
+    epfo_esic: "L&T_EPFO_ESIC_ECR_Challan_Aug2026.pdf",
+    pan_206ab: "L&T_PAN_ITR_Section206AB_Certificate.pdf",
+    oem_auth: "L&T_Direct_OEM_Manufacturing_License.pdf",
+    land_border: "L&T_Rule_144xi_Land_Border_Declaration.pdf"
   });
 
   const [submitting, setSubmitting] = useState(false);
@@ -368,6 +372,86 @@ export default function CompanyPortalView({
               <button
                 type="button"
                 onClick={() => handleSimulateFileSelect("local_content", "Make_In_India_Class1_Cert.pdf")}
+                className="px-2.5 py-1 rounded bg-white text-stone-800 border border-stone-300 hover:bg-stone-100 font-serif font-bold text-xs"
+              >
+                Attach PDF
+              </button>
+            </div>
+
+            {/* Document 7: EPFO & ESIC Labor Compliance */}
+            <div className="p-3.5 rounded border border-stone-300 bg-[#FAF9F6] flex items-center justify-between text-xs">
+              <div className="flex items-center space-x-2.5 overflow-hidden">
+                <FileText className="w-5 h-5 text-stone-600 shrink-0" />
+                <div className="overflow-hidden">
+                  <div className="font-serif font-bold text-stone-900">EPFO & ESIC ECR Compliance Receipts</div>
+                  <div className="text-[11px] text-stone-500 font-mono truncate">
+                    {uploadedFiles.epfo_esic || "No PDF selected"}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleSimulateFileSelect("epfo_esic", "EPFO_ECR_Receipts_Verified.pdf")}
+                className="px-2.5 py-1 rounded bg-white text-stone-800 border border-stone-300 hover:bg-stone-100 font-serif font-bold text-xs"
+              >
+                Attach PDF
+              </button>
+            </div>
+
+            {/* Document 8: PAN & Section 206AB Tax Compliance */}
+            <div className="p-3.5 rounded border border-stone-300 bg-[#FAF9F6] flex items-center justify-between text-xs">
+              <div className="flex items-center space-x-2.5 overflow-hidden">
+                <FileText className="w-5 h-5 text-stone-600 shrink-0" />
+                <div className="overflow-hidden">
+                  <div className="font-serif font-bold text-stone-900">PAN & Section 206AB ITR Returns</div>
+                  <div className="text-[11px] text-stone-500 font-mono truncate">
+                    {uploadedFiles.pan_206ab || "No PDF selected"}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleSimulateFileSelect("pan_206ab", "PAN_ITR_Section_206AB.pdf")}
+                className="px-2.5 py-1 rounded bg-white text-stone-800 border border-stone-300 hover:bg-stone-100 font-serif font-bold text-xs"
+              >
+                Attach PDF
+              </button>
+            </div>
+
+            {/* Document 9: OEM / MAF Authorization */}
+            <div className="p-3.5 rounded border border-stone-300 bg-[#FAF9F6] flex items-center justify-between text-xs">
+              <div className="flex items-center space-x-2.5 overflow-hidden">
+                <FileText className="w-5 h-5 text-stone-600 shrink-0" />
+                <div className="overflow-hidden">
+                  <div className="font-serif font-bold text-stone-900">OEM Direct License or Manufacturer Authorization</div>
+                  <div className="text-[11px] text-stone-500 font-mono truncate">
+                    {uploadedFiles.oem_auth || "No PDF selected"}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleSimulateFileSelect("oem_auth", "OEM_Direct_License_Valid.pdf")}
+                className="px-2.5 py-1 rounded bg-white text-stone-800 border border-stone-300 hover:bg-stone-100 font-serif font-bold text-xs"
+              >
+                Attach PDF
+              </button>
+            </div>
+
+            {/* Document 10: Rule 144(xi) Land Border Sharing Declaration */}
+            <div className="p-3.5 rounded border border-stone-300 bg-[#FAF9F6] flex items-center justify-between text-xs">
+              <div className="flex items-center space-x-2.5 overflow-hidden">
+                <FileText className="w-5 h-5 text-stone-600 shrink-0" />
+                <div className="overflow-hidden">
+                  <div className="font-serif font-bold text-stone-900">Rule 144(xi) Land Border Sharing Undertaking</div>
+                  <div className="text-[11px] text-stone-500 font-mono truncate">
+                    {uploadedFiles.land_border || "No PDF selected"}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleSimulateFileSelect("land_border", "Rule_144xi_Land_Border_Compliance.pdf")}
                 className="px-2.5 py-1 rounded bg-white text-stone-800 border border-stone-300 hover:bg-stone-100 font-serif font-bold text-xs"
               >
                 Attach PDF

@@ -449,44 +449,84 @@ export default function OfficerProjectManager({
                   <table className="w-full text-left text-xs">
                     <thead className="bg-[#FAF9F6] text-stone-800 font-serif font-bold border-b border-stone-300">
                       <tr>
-                        <th className="p-2.5">Company Name</th>
+                        <th className="p-2.5">Company Name & Entity</th>
                         <th className="p-2.5 font-mono">Quoted Budget</th>
-                        <th className="p-2.5 font-serif">AI Compliance</th>
-                        <th className="p-2.5">Key Technical & Statutory Features</th>
-                        <th className="p-2.5 font-serif">Status</th>
+                        <th className="p-2.5 font-serif">Score & Risk Profile</th>
+                        <th className="p-2.5">Government Portals & DigiLocker</th>
+                        <th className="p-2.5">Key Technical & Statutory Verification</th>
+                        <th className="p-2.5 font-serif">AI Recommendation</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-stone-200">
                       {projectBids.map((b) => {
                         const bCr = (b.quoted_price_inr || 138000000) / 10000000;
+                        const riskKey = b.risk_level || "LOW_RISK";
                         return (
                           <tr key={b.id} className="hover:bg-stone-50">
-                            <td className="p-2.5 font-serif font-bold text-stone-900">
-                              {b.bidder_name}
+                            <td className="p-2.5">
+                              <div className="font-serif font-bold text-stone-900">{b.bidder_name}</div>
+                              <div className="text-[10px] text-stone-500 font-mono">GSTIN: {b.gstin} • {b.bidder_type_label || b.bidder_type}</div>
                             </td>
                             <td className="p-2.5 font-mono font-bold text-stone-800">
                               ₹ {bCr.toFixed(2)} Cr
                             </td>
                             <td className="p-2.5">
-                              <span className={`px-2 py-0.5 rounded text-[10px] font-serif font-bold ${
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-serif font-bold block mb-1 ${
                                 b.overall_verdict === "PASS" ? "bg-emerald-50 text-emerald-900 border border-emerald-200" :
                                 b.overall_verdict === "FAIL" ? "bg-rose-50 text-rose-900 border border-rose-200" :
                                 "bg-amber-50 text-amber-900 border border-amber-200"
                               }`}>
                                 {b.overall_verdict} ({b.compliance_score}%)
                               </span>
+                              <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded border ${
+                                riskKey === "LOW_RISK" ? "bg-emerald-50 text-emerald-800 border-emerald-200" :
+                                riskKey === "MODERATE_RISK" ? "bg-amber-50 text-amber-800 border-amber-200" :
+                                "bg-rose-50 text-rose-800 border-rose-200"
+                              }`}>
+                                {b.risk_label || riskKey}
+                              </span>
+                            </td>
+                            <td className="p-2.5 text-[11px]">
+                              {b.id === "BID-001-LT" && (
+                                <div>
+                                  <span className="font-semibold text-emerald-900 block font-mono text-[10px]">10/10 Portals Active</span>
+                                  <span className="text-[10px] text-stone-500">DigiLocker Class-3 DSC Verified</span>
+                                </div>
+                              )}
+                              {b.id === "BID-002-DELTA" && (
+                                <div>
+                                  <span className="font-semibold text-amber-900 block font-mono text-[10px]">MSME Udyam Verified</span>
+                                  <span className="text-[10px] text-stone-500">Capricorn DSC • EMD Waived</span>
+                                </div>
+                              )}
+                              {b.id === "BID-003-APEX" && (
+                                <div>
+                                  <span className="font-semibold text-rose-900 block font-mono text-[10px]">Suspended GSTN (Rule 21A)</span>
+                                  <span className="text-[10px] text-rose-800">CPPP Central Debarment Hit</span>
+                                </div>
+                              )}
+                              {b.id === "BID-004-SHADOW" && (
+                                <div>
+                                  <span className="font-semibold text-purple-900 block font-mono text-[10px]">Prompt Injection Quarantined</span>
+                                  <span className="text-[10px] text-stone-500">Untrusted Self-Signed Certificate</span>
+                                </div>
+                              )}
                             </td>
                             <td className="p-2.5 text-[11px] text-stone-600">
-                              {b.id === "BID-001-LT" && "ISO 9001 valid till 2027 • SIL-3 verified • 78.5% MII"}
-                              {b.id === "BID-002-DELTA" && "Udyam MSME turnover waiver • 86% scope match"}
-                              {b.id === "BID-003-APEX" && "Expired ISO • Suspended GST • Blacklist order active"}
-                              {b.id === "BID-004-SHADOW" && "Prompt Injection attack intercepted & quarantined"}
+                              {b.id === "BID-001-LT" && "ISO 9001 valid till 2027 • SIL-3 Actuation • 78.5% MII Class-I"}
+                              {b.id === "BID-002-DELTA" && "Udyam MSME turnover waiver • 86% scope match • 82% MII"}
+                              {b.id === "BID-003-APEX" && "Expired ISO • Section 206AB Non-Filer • Forged BG history"}
+                              {b.id === "BID-004-SHADOW" && "System Prompt Attack Blocked • Missing CA Turnover & ISO"}
                             </td>
-                            <td className="p-2.5 font-serif font-bold">
+                            <td className="p-2.5 font-serif font-bold text-xs">
                               {b.id === "BID-001-LT" ? (
-                                <span className="text-emerald-800">Award Candidate</span>
+                                <span className="text-emerald-800 block">Recommended (L1)</span>
+                              ) : b.id === "BID-002-DELTA" ? (
+                                <span className="text-amber-800 block">MSME Exemption</span>
+                              ) : b.id === "BID-003-APEX" ? (
+                                <span className="text-rose-800 block">Disqualified</span>
                               ) : (
-                                <span className="text-stone-400">Not Eligible</span>
+                                <span className="text-purple-800 block">Security Isolation</span>
                               )}
                             </td>
                           </tr>

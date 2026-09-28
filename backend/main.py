@@ -236,6 +236,78 @@ def generate_report(bid_id: str):
         "export_reference": f"GEM-COMP-REP-{bid_id}-{int(datetime.utcnow().timestamp())}"
     }
 
+@app.get("/api/bids/{bid_id}/portals")
+def get_bid_portals(bid_id: str):
+    """Features 1, 2, 3, 4, 6, 7, 8, 9: Central Government Portals Verification"""
+    bid = next((b for b in BIDS_DB if b["id"] == bid_id), None)
+    if not bid:
+        raise HTTPException(status_code=404, detail="Bid not found")
+    
+    portals = bid.get("portal_verifications")
+    if not portals:
+        portals = RegistryMockService.verify_all_portals(bid.get("gstin", ""), bid.get("udyam_number"), bid.get("pan"))
+    return {"bid_id": bid_id, "portal_verifications": portals}
+
+@app.get("/api/bids/{bid_id}/anomalies")
+def get_bid_anomalies(bid_id: str):
+    """Feature 11: AI-detected missing, inconsistent, or non-compliant information"""
+    bid = next((b for b in BIDS_DB if b["id"] == bid_id), None)
+    if not bid:
+        raise HTTPException(status_code=404, detail="Bid not found")
+    return {"bid_id": bid_id, "anomalies": bid.get("ai_anomalies", [])}
+
+@app.get("/api/bids/{bid_id}/risk-profile")
+def get_bid_risk_profile(bid_id: str):
+    """Feature 12: Overall Compliance Score and Risk Level"""
+    bid = next((b for b in BIDS_DB if b["id"] == bid_id), None)
+    if not bid:
+        raise HTTPException(status_code=404, detail="Bid not found")
+    return {
+        "bid_id": bid_id,
+        "compliance_score": bid.get("compliance_score", 0),
+        "risk_level": bid.get("risk_level", "LOW_RISK"),
+        "risk_label": bid.get("risk_label", "Low Risk"),
+        "score_breakdown": bid.get("score_breakdown", {})
+    }
+
+@app.get("/api/bids/{bid_id}/recommendation")
+def get_bid_officer_recommendation(bid_id: str):
+    """Feature 13: AI-generated recommendation for the Procurement Officer"""
+    bid = next((b for b in BIDS_DB if b["id"] == bid_id), None)
+    if not bid:
+        raise HTTPException(status_code=404, detail="Bid not found")
+    return {"bid_id": bid_id, "recommendation": bid.get("officer_recommendation")}
+
+@app.post("/api/bids/{bid_id}/verify-portals")
+def run_automated_portal_verification(bid_id: str):
+    """Trigger real-time query to all 10 Central Government Portals & anchor in ledger"""
+    bid = next((b for b in BIDS_DB if b["id"] == bid_id), None)
+    if not bid:
+        raise HTTPException(status_code=404, detail="Bid not found")
+
+    results = RegistryMockService.verify_all_portals(bid.get("gstin", ""), bid.get("udyam_number"), bid.get("pan"))
+    
+    # Anchor in audit ledger (Feature 14)
+    audit_ledger.append_event(
+        event_type="GOVERNMENT_PORTALS_VERIFICATION_COMPLETE",
+        actor="AUTOMATED_REGISTRY_GATEWAY",
+        role="SYSTEM",
+        bid_id=bid_id,
+        tender_id=bid.get("tender_id", CURRENT_TENDER["id"]),
+        details={
+            "bidder_name": bid.get("bidder_name"),
+            "portals_count": len(results),
+            "gstin": bid.get("gstin"),
+            "timestamp": datetime.utcnow().isoformat() + "Z"
+        }
+    )
+
+    return {
+        "message": "Automated verification completed across all Central Government Portals.",
+        "bid_id": bid_id,
+        "portal_verifications": results
+    }
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)

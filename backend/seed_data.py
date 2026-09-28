@@ -555,6 +555,59 @@ def initialize_database():
         bid_raw["evaluations"] = [e.dict() for e in evals]
         bid_raw["overall_verdict"] = overall
 
+        # Attach 14-point compliance metrics
+        if "compliance_score" not in bid_raw:
+            from .registry_mock import RegistryMockService
+            if bid_raw["id"] == "BID-001-LT":
+                bid_raw["compliance_score"] = 98
+                bid_raw["risk_level"] = "LOW_RISK"
+                bid_raw["risk_label"] = "Low Risk"
+                bid_raw["pan"] = "AAACL1972K"
+                bid_raw["officer_recommendation"] = {
+                    "verdict": "RECOMMENDED_FOR_AWARD",
+                    "title": "Recommended for Contract Award (L1 Compliant)",
+                    "summary": "Bidder complies with 100% of statutory registrations, technical experience, GFR 2017 standards, and Make in India requirements.",
+                    "statutory_basis": "GFR 2017 Rule 173(i) & CPCL Purchase Manual Sec 4.2."
+                }
+            elif bid_raw["id"] == "BID-002-DELTA":
+                bid_raw["compliance_score"] = 86
+                bid_raw["risk_level"] = "MODERATE_RISK"
+                bid_raw["risk_label"] = "Moderate Risk (Policy Waiver Required)"
+                bid_raw["pan"] = "AABCD9842F"
+                bid_raw["officer_recommendation"] = {
+                    "verdict": "QUALIFIED_SUBJECT_TO_MSME_RATIFICATION",
+                    "title": "Qualified Subject to MSME Waiver Ratification",
+                    "summary": "Bidder is technically qualified and holds verified Udyam MSME and Startup India status. Requires formal officer ratification of exemption under GFR 2017 Rule 173(i).",
+                    "statutory_basis": "Public Procurement Policy for MSEs Order 2012 & DoE OM F.20/2/2014-PPD(Pt)."
+                }
+            elif bid_raw["id"] == "BID-003-APEX":
+                bid_raw["compliance_score"] = 28
+                bid_raw["risk_level"] = "HIGH_RISK"
+                bid_raw["risk_label"] = "High Risk (Disqualified on Law)"
+                bid_raw["pan"] = "AABCA3319M"
+                bid_raw["officer_recommendation"] = {
+                    "verdict": "REJECT_AND_DISQUALIFY",
+                    "title": "Mandatory Disqualification (Statutory Violations)",
+                    "summary": "Mandatory disqualification required under GFR Rule 151 (Active Central Debarment), GeM GTC Clause 3 (Suspended GSTIN under Rule 21A), and Expired ISO Accreditation.",
+                    "statutory_basis": "GFR 2017 Rule 151 (Debarment from Bidding) & Rule 175."
+                }
+            else:
+                bid_raw["compliance_score"] = 12
+                bid_raw["risk_level"] = "CRITICAL_RISK"
+                bid_raw["risk_label"] = "Critical Risk (Security Guardrail Intercept)"
+                bid_raw["pan"] = "AAGCS9912E"
+                bid_raw["officer_recommendation"] = {
+                    "verdict": "SECURITY_QUARANTINE_VIGILANCE",
+                    "title": "Security Quarantine & Vigilance Referral",
+                    "summary": "CRITICAL CYBERSECURITY ALERT: Bidder submitted documents containing embedded adversarial prompt injection attacks.",
+                    "statutory_basis": "GFR 2017 Rule 175 (Code of Integrity) & IT Act 2000 Section 43/66."
+                }
+            bid_raw["portal_verifications"] = RegistryMockService.verify_all_portals(
+                bid_raw.get("gstin", ""), 
+                bid_raw.get("udyam_number"), 
+                bid_raw.get("pan")
+            )
+
         # Append to audit ledger
         audit_ledger.append_event(
             event_type="BID_INGESTION_AND_EVALUATION",

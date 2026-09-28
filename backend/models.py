@@ -90,6 +90,21 @@ class BidSubmission(BaseModel):
     officer_name: Optional[str] = None
     officer_sign_timestamp: Optional[str] = None
     security_alert: Optional[Dict[str, Any]] = None
+    pan: Optional[str] = None
+    cin: Optional[str] = None
+    epfo_code: Optional[str] = None
+    esic_code: Optional[str] = None
+    compliance_score: Optional[int] = None
+    risk_level: Optional[str] = None
+    risk_label: Optional[str] = None
+    risk_color: Optional[str] = None
+    quoted_price_inr: Optional[float] = None
+    score_breakdown: Optional[Dict[str, Any]] = None
+    portal_verifications: Optional[List[Dict[str, Any]]] = None
+    digilocker_verification: Optional[Dict[str, Any]] = None
+    make_in_india: Optional[Dict[str, Any]] = None
+    ai_anomalies: Optional[List[Dict[str, Any]]] = None
+    officer_recommendation: Optional[Dict[str, Any]] = None
 
 class Tender(BaseModel):
     id: str

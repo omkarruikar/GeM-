@@ -35,6 +35,7 @@ export default function AuditTrailExplorer({ auditLog, onExportAudit }) {
 
   const filteredLogs = auditLog.filter(log => {
     if (filterType === "ALL") return true;
+    if (filterType === "PORTALS") return log.event_type.includes("GOVERNMENT") || log.event_type.includes("PORTAL") || log.event_type.includes("MSME") || log.event_type.includes("WATCHLIST");
     if (filterType === "OVERRIDES") return log.event_type.includes("OVERRIDE");
     if (filterType === "SECURITY") return log.event_type.includes("SECURITY");
     if (filterType === "EVALUATIONS") return log.event_type.includes("EVALUATION") || log.event_type.includes("INGESTION");
@@ -138,6 +139,7 @@ export default function AuditTrailExplorer({ auditLog, onExportAudit }) {
         <div className="flex items-center space-x-1.5 overflow-x-auto">
           {[
             { id: "ALL", label: "All Audit Events", count: auditLog.length },
+            { id: "PORTALS", label: "Govt Portals & DigiLocker", count: auditLog.filter(l => l.event_type.includes("GOVERNMENT") || l.event_type.includes("PORTAL") || l.event_type.includes("MSME") || l.event_type.includes("WATCHLIST")).length },
             { id: "OVERRIDES", label: "Officer Overrides (FR6)", count: auditLog.filter(l => l.event_type.includes("OVERRIDE")).length },
             { id: "SECURITY", label: "Security Guardrails (FR12)", count: auditLog.filter(l => l.event_type.includes("SECURITY")).length },
             { id: "EVALUATIONS", label: "Ingestion & Rules", count: auditLog.filter(l => l.event_type.includes("EVALUATION") || l.event_type.includes("INGESTION")).length },
